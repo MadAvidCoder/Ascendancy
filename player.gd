@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
+const SPEED = 375.0
+const JUMP_VELOCITY = -430.0
 
 var can_coyote = false
 var jump_buffered = false
@@ -12,7 +12,10 @@ var jump_buffered = false
 func _physics_process(delta: float) -> void:
 	# Gravity
 	if not is_on_floor():
-		velocity += get_gravity() * delta
+		if velocity.y >= 0:
+			velocity += get_gravity() * delta * 1.8
+		else:
+			velocity += get_gravity() * delta * 1.2
 
 	# Jump
 	if Input.is_action_just_pressed("ui_accept") or jump_buffered:
@@ -25,6 +28,10 @@ func _physics_process(delta: float) -> void:
 		elif velocity.y >= 0 and not jump_buffered:
 			jump_buffer.start()
 			jump_buffered = true
+
+	# Allow variable jump height
+	if Input.is_action_just_released("ui_accept") and velocity.y <= 0:
+		velocity.y *= 0.5
 
 	# Movement
 	var direction := Input.get_axis("ui_left", "ui_right")
