@@ -4,7 +4,7 @@ const SPEED = 375.0
 const JUMP_VELOCITY = -430.0
 
 var wall_x_force = 1000.0
-var wall_y_force = -2150.0
+var wall_y_force = -645.0
 
 var can_coyote = false
 var jump_buffered = false
@@ -13,6 +13,7 @@ var slide_timeout = false
 var wall_jumping = false
 var can_wall_jump = true
 var last_on_wall = INF
+var was_wall_jumping = false
 
 @onready var coyote_timer = $CoyoteTimer
 @onready var jump_buffer = $JumpBuffer
@@ -49,13 +50,17 @@ func _physics_process(delta: float) -> void:
 		# Movement
 		var direction := Input.get_axis("ui_left", "ui_right")
 		if direction:
-			velocity.x = direction * SPEED
+			if was_wall_jumping:
+				velocity.x = direction * SPEED * 1.3
+			else:
+				velocity.x = direction * SPEED
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED/1.2)
 		if velocity.x <= 0:
 			wall_jumping = false
+			was_wall_jumping = true
 	
 	last_on_wall += delta
 	if is_on_wall_only():
