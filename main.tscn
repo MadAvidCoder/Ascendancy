@@ -155,6 +155,7 @@ texture = ExtResource("2_0xm2m")
 shape = SubResource("RectangleShape2D_h2yge")
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
+offset = Vector2(0, -200)
 limit_smoothed = true
 position_smoothing_enabled = true
 drag_horizontal_enabled = true
