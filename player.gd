@@ -3,8 +3,11 @@ extends CharacterBody2D
 const SPEED = 300.0
 const JUMP_VELOCITY = -400.0
 
-@onready var coyote_timer = $CoyoteTimer
 var can_coyote = false
+var jump_buffered = false
+
+@onready var coyote_timer = $CoyoteTimer
+@onready var jump_buffer = $JumpBuffer
 
 func _physics_process(delta: float) -> void:
 	# Gravity
@@ -12,9 +15,16 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 
 	# Jump
-	if Input.is_action_just_pressed("ui_accept") and (is_on_floor() or can_coyote):
-		can_coyote = false
-		velocity.y = JUMP_VELOCITY
+	if Input.is_action_just_pressed("ui_accept") or jump_buffered:
+		if is_on_floor():
+			jump_buffered = false
+			velocity.y = JUMP_VELOCITY
+		elif can_coyote:
+			can_coyote = false
+			velocity.y = JUMP_VELOCITY
+		elif velocity.y >= 0 and not jump_buffered:
+			jump_buffer.start()
+			jump_buffered = true
 
 	# Movement
 	var direction := Input.get_axis("ui_left", "ui_right")
@@ -36,3 +46,6 @@ func _physics_process(delta: float) -> void:
 
 func _on_coyote_timeout() -> void:
 	can_coyote = false
+
+func _on_jump_buffer_timeout() -> void:
+	jump_buffered = false
