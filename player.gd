@@ -14,6 +14,8 @@ var wall_jumping = false
 var can_wall_jump = true
 var last_on_wall = INF
 var was_wall_jumping = false
+var cur_dir = 1
+var was_running = 0
 
 @onready var coyote_timer = $CoyoteTimer
 @onready var jump_buffer = $JumpBuffer
@@ -21,6 +23,7 @@ var was_wall_jumping = false
 @onready var wall_jump_timer = $WallJumpTimer
 @onready var left_raycast = $Raycasters/LeftRaycast
 @onready var right_raycast = $Raycasters/RightRaycast
+@onready var sprite = $Sprite2D
 
 func _physics_process(delta: float) -> void:
 	# Gravity
@@ -53,7 +56,18 @@ func _physics_process(delta: float) -> void:
 			if was_wall_jumping:
 				velocity.x = direction * SPEED * 1.3
 			else:
-				velocity.x = direction * SPEED
+				if cur_dir == direction:
+					sprite.play("run")
+					velocity.x = direction * SPEED
+				else:
+					if was_running < 0:
+						sprite.flip_h = true if cur_dir == 1 else false
+						cur_dir = direction
+						velocity.x = direction * SPEED
+					else:
+						if sprite.animation != "turn":
+							sprite.play("turn")
+						velocity.x = -direction * SPEED / 2
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 	else:
@@ -91,7 +105,11 @@ func _physics_process(delta: float) -> void:
 	
 	# Coyote Time
 	var was_on_floor := is_on_floor()
-	
+	if velocity.x == 0:
+		sprite.play("idle")
+		was_running -= delta
+	else:
+		was_running = 0.1
 	# Move character
 	move_and_slide()
 	
@@ -111,3 +129,8 @@ func _on_wall_slide_timer_timeout() -> void:
 
 func _on_wall_jump_timer_timeout() -> void:
 	can_wall_jump = true
+
+func _on_sprite_2d_animation_finished() -> void:
+	if sprite.animation == "turn":
+		cur_dir = -cur_dir
+		sprite.flip_h = true if cur_dir == -1 else false
