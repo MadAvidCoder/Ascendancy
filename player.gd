@@ -24,6 +24,27 @@ var was_running = 0
 @onready var left_raycast = $Raycasters/LeftRaycast
 @onready var right_raycast = $Raycasters/RightRaycast
 @onready var sprite = $Sprite2D
+@onready var collision = $CollisionShape2D
+@onready var collision_rect = load("res://player_collision_rectangle.tres")
+
+func _process(delta: float) -> void:
+	if sprite.flip_h:
+		match sprite.animation:
+			"idle", "run", "jump": 
+				collision_rect.size = Vector2(20.75, 38.0)
+				collision.position = Vector2(11.25, 42.0)
+			"wall_hang", "wall_slide":
+				collision_rect.size = Vector2(20.0, 38.0)
+				collision.position = Vector2(2, 42.0)
+	else:
+		match sprite.animation:
+			"idle", "run", "jump": 
+				collision_rect.size = Vector2(20.75, 38.0)
+				collision.position = Vector2(-10.75, 42.0)
+			"wall_hang", "wall_slide":
+				collision_rect.size = Vector2(22.0, 34.0)
+				collision.position = Vector2(-2, 42.0)
+			
 
 func _physics_process(delta: float) -> void:
 	# Gravity
@@ -35,10 +56,15 @@ func _physics_process(delta: float) -> void:
 
 	# Jump
 	if Input.is_action_just_pressed("ui_accept") or jump_buffered:
+		if sprite.animation == "turn":
+			cur_dir = -cur_dir
+			sprite.flip_h = true if cur_dir == -1 else false
 		if is_on_floor():
+			sprite.play("jump")
 			jump_buffered = false
 			velocity.y = JUMP_VELOCITY
 		elif can_coyote:
+			sprite.play("jump")
 			can_coyote = false
 			velocity.y = JUMP_VELOCITY
 		elif velocity.y >= 0 and not jump_buffered:
@@ -56,8 +82,9 @@ func _physics_process(delta: float) -> void:
 			if was_wall_jumping:
 				velocity.x = direction * SPEED * 1.3
 			else:
-				if cur_dir == direction:
-					sprite.play("run")
+				if cur_dir == direction or velocity.y != 0:
+					if velocity.y == 0:
+						sprite.play("run")
 					velocity.x = direction * SPEED
 				else:
 					if was_running < 0:
@@ -72,12 +99,17 @@ func _physics_process(delta: float) -> void:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED/1.2)
-		if velocity.x <= 0:
+		if velocity.y <= 0:
 			wall_jumping = false
 			was_wall_jumping = true
 	
 	last_on_wall += delta
 	if is_on_wall_only():
+		sprite.play("wall_slide")
+		if left_raycast.is_colliding():
+			sprite.flip_h = false
+		elif right_raycast.is_colliding():
+			sprite.flip_h = true
 		last_on_wall = 0
 		if not slide_timeout:
 			if not sliding:
@@ -93,8 +125,10 @@ func _physics_process(delta: float) -> void:
 		wall_jumping = true
 		velocity.y = wall_y_force
 		if left_raycast.is_colliding():
+			sprite.flip_h = true
 			velocity.x = wall_x_force
 		elif right_raycast.is_colliding():
+			sprite.flip_h = false
 			velocity.x = -wall_x_force
 		else:
 			wall_jumping = false
@@ -102,11 +136,15 @@ func _physics_process(delta: float) -> void:
 	# Check if landed
 	if is_on_floor():
 		wall_jumping = false
+		was_wall_jumping = false
 	
 	# Coyote Time
 	var was_on_floor := is_on_floor()
-	if velocity.x == 0:
+	
+	if velocity == Vector2(0,0):
 		sprite.play("idle")
+	
+	if velocity.x == 0:
 		was_running -= delta
 	else:
 		was_running = 0.1
@@ -132,5 +170,6 @@ func _on_wall_jump_timer_timeout() -> void:
 
 func _on_sprite_2d_animation_finished() -> void:
 	if sprite.animation == "turn":
+		sprite.play("run")
 		cur_dir = -cur_dir
 		sprite.flip_h = true if cur_dir == -1 else false
