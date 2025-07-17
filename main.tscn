@@ -277,7 +277,8 @@ texture = ExtResource("14_w48qg")
 12:15/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 
 [sub_resource type="TileSet" id="TileSet_h2yge"]
-physics_layer_0/collision_layer = 1
+physics_layer_0/collision_layer = 4
+physics_layer_0/collision_mask = 4
 sources/2 = SubResource("TileSetAtlasSource_vivmo")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lquwl"]
@@ -291,6 +292,8 @@ tile_set = SubResource("TileSet_h2yge")
 
 [node name="Skeleton" type="CharacterBody2D" parent="."]
 position = Vector2(424, 523)
+collision_layer = 2
+collision_mask = 4
 script = ExtResource("4_7mycd")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Skeleton"]
@@ -306,28 +309,34 @@ shape = SubResource("RectangleShape2D_lquwl")
 [node name="Raycasters" type="Node2D" parent="Skeleton"]
 
 [node name="DownLeft" type="RayCast2D" parent="Skeleton/Raycasters"]
-position = Vector2(-31, 37)
+position = Vector2(-31, 35)
 target_position = Vector2(0, 22)
+collision_mask = 4
 
 [node name="LeftTop" type="RayCast2D" parent="Skeleton/Raycasters"]
 position = Vector2(-42, -30)
 target_position = Vector2(-25, 0)
+collision_mask = 4
 
 [node name="LeftBottom" type="RayCast2D" parent="Skeleton/Raycasters"]
 position = Vector2(-44, 32)
 target_position = Vector2(-25, 0)
+collision_mask = 4
 
 [node name="DownRight" type="RayCast2D" parent="Skeleton/Raycasters"]
-position = Vector2(10, 37)
+position = Vector2(10, 35)
 target_position = Vector2(0, 22)
+collision_mask = 4
 
 [node name="RightTop" type="RayCast2D" parent="Skeleton/Raycasters"]
 position = Vector2(23, -32)
 target_position = Vector2(25, 0)
+collision_mask = 4
 
 [node name="RightBottom" type="RayCast2D" parent="Skeleton/Raycasters"]
 position = Vector2(23, 32)
 target_position = Vector2(25, 0)
+collision_mask = 4
 
 [node name="DirectionTimer" type="Timer" parent="Skeleton"]
 wait_time = 3.0
@@ -340,6 +349,7 @@ one_shot = true
 
 [node name="Player" type="CharacterBody2D" parent="."]
 position = Vector2(687, 468)
+collision_mask = 4
 safe_margin = 0.14
 script = ExtResource("1_ig7tw")
 
@@ -384,11 +394,15 @@ position = Vector2(0, 74)
 
 [node name="RightRaycast" type="RayCast2D" parent="Player/Raycasters"]
 target_position = Vector2(50, 0)
+collision_mask = 4
 
 [node name="LeftRaycast" type="RayCast2D" parent="Player/Raycasters"]
 target_position = Vector2(-50, 0)
+collision_mask = 4
 
 [node name="AttackArea" type="Area2D" parent="Player"]
+collision_layer = 0
+collision_mask = 2
 monitorable = false
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Player/AttackArea"]
