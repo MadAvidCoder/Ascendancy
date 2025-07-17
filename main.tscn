@@ -291,7 +291,7 @@ tile_map_data = PackedByteArray("AAAHACMAAgABAAEAAAAIACMAAgACAAEAAAAJACMAAgADAAE
 tile_set = SubResource("TileSet_h2yge")
 
 [node name="Skeleton" type="CharacterBody2D" parent="."]
-position = Vector2(424, 523)
+position = Vector2(1129, 523)
 collision_layer = 2
 collision_mask = 4
 script = ExtResource("4_7mycd")
@@ -309,7 +309,7 @@ shape = SubResource("RectangleShape2D_lquwl")
 [node name="Raycasters" type="Node2D" parent="Skeleton"]
 
 [node name="DownLeft" type="RayCast2D" parent="Skeleton/Raycasters"]
-position = Vector2(-31, 35)
+position = Vector2(-52, 35)
 target_position = Vector2(0, 22)
 collision_mask = 4
 
@@ -324,7 +324,7 @@ target_position = Vector2(-25, 0)
 collision_mask = 4
 
 [node name="DownRight" type="RayCast2D" parent="Skeleton/Raycasters"]
-position = Vector2(10, 35)
+position = Vector2(31, 35)
 target_position = Vector2(0, 22)
 collision_mask = 4
 

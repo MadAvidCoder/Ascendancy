@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-const SPEED = 50
+const SPEED = 45
 
 var health = 80
 var max_health = 80 #??
@@ -21,6 +21,18 @@ enum {
 @onready var sprite = $AnimatedSprite2D
 @onready var dir_timer = $DirectionTimer
 @onready var death_timer = $DeathTimer
+@onready var raycasts = {
+	"left": {
+		"down": $Raycasters/DownLeft,
+		"top": $Raycasters/LeftTop,
+		"bottom": $Raycasters/LeftBottom,
+	},
+	"right" : {
+		"down": $Raycasters/DownRight,
+		"top": $Raycasters/RightTop,
+		"bottom": $Raycasters/RightBottom,
+	}
+}
 
 func animation():
 	sprite.flip_h = true if direction == -1 else false
@@ -52,6 +64,16 @@ func _physics_process(delta: float) -> void:
 		velocity.x = 0
 	
 	if state == WALKING:
+		if direction == -1:
+			if not raycasts["left"]["down"].is_colliding() or raycasts["left"]["top"].is_colliding() or raycasts["left"]["bottom"].is_colliding():
+				dir_timer.start(choose([2, 2.5, 3]))
+				state = IDLE
+				velocity.x = 0
+		elif direction == 1:
+			if not raycasts["right"]["down"].is_colliding() or raycasts["right"]["top"].is_colliding() or raycasts["right"]["bottom"].is_colliding():
+				dir_timer.start(choose([2, 2.5, 3]))
+				state = IDLE
+				velocity.x = 0
 		velocity.x = direction * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED/3)
