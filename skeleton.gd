@@ -20,6 +20,7 @@ enum {
 
 @onready var sprite = $AnimatedSprite2D
 @onready var dir_timer = $DirectionTimer
+@onready var death_timer = $DeathTimer
 
 func animation():
 	sprite.flip_h = true if direction == -1 else false
@@ -72,3 +73,21 @@ func _on_direction_timer_timeout() -> void:
 func choose(arr):
 	arr.shuffle()
 	return arr.front()
+
+func hit(attacker):
+	if health >= 0:
+		health -= 30
+		state = HIT
+		if health < 0:
+			state = DEAD
+			sprite.play("dead")
+			death_timer.start()
+
+func _on_death_timer_timeout() -> void:
+	self.queue_free()
+
+func _on_animation_finished() -> void:
+	if sprite.animation == 'hit':
+		sprite.play("idle")
+		state = IDLE
+		dir_timer.start(0.1)

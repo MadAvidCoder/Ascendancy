@@ -16,6 +16,8 @@ var last_on_wall = INF
 var was_wall_jumping = false
 var cur_dir = 1
 var was_running = 0
+var attacking = false
+var damaged = []
 
 @onready var coyote_timer = $CoyoteTimer
 @onready var jump_buffer = $JumpBuffer
@@ -26,6 +28,8 @@ var was_running = 0
 @onready var sprite = $Sprite2D
 @onready var collision = $CollisionShape2D
 @onready var collision_rect = load("res://player_collision_rectangle.tres")
+@onready var attack_area = $AttackArea
+@onready var attack_polygon = $AttackArea/CollisionPolygon2D
 
 func _process(delta: float) -> void:
 	if sprite.flip_h:
@@ -36,6 +40,9 @@ func _process(delta: float) -> void:
 			"wall_hang", "wall_slide":
 				collision_rect.size = Vector2(20.0, 38.0)
 				collision.position = Vector2(2, 42.0)
+			"attack_1":
+				collision_rect.size = Vector2(23.25, 38.0)
+				collision.position = Vector2(8.75, 42.0)
 	else:
 		match sprite.animation:
 			"idle", "run", "jump": 
@@ -44,6 +51,9 @@ func _process(delta: float) -> void:
 			"wall_hang", "wall_slide":
 				collision_rect.size = Vector2(22.0, 34.0)
 				collision.position = Vector2(-2, 42.0)
+			"attack_1":
+				collision_rect.size = Vector2(23.25, 38.0)
+				collision.position = Vector2(-8.25, 42.0)
 			
 
 func _physics_process(delta: float) -> void:
@@ -55,16 +65,18 @@ func _physics_process(delta: float) -> void:
 			velocity += get_gravity() * delta * 1.2
 
 	# Jump
-	if Input.is_action_just_pressed("ui_accept") or jump_buffered:
+	if Input.is_action_just_pressed("jump") or jump_buffered:
 		if sprite.animation == "turn":
 			cur_dir = -cur_dir
 			sprite.flip_h = true if cur_dir == -1 else false
 		if is_on_floor():
 			sprite.play("jump")
+			attacking = false
 			jump_buffered = false
 			velocity.y = JUMP_VELOCITY
 		elif can_coyote:
 			sprite.play("jump")
+			attacking = false
 			can_coyote = false
 			velocity.y = JUMP_VELOCITY
 		elif velocity.y >= 0 and not jump_buffered:
@@ -72,18 +84,18 @@ func _physics_process(delta: float) -> void:
 			jump_buffered = true
 
 	# Allow variable jump height
-	if Input.is_action_just_released("ui_accept") and velocity.y <= 0 and not wall_jumping:
+	if Input.is_action_just_released("jump") and velocity.y <= 0 and not wall_jumping:
 		velocity.y *= 0.5
 
 	if not wall_jumping:
 		# Movement
-		var direction := Input.get_axis("ui_left", "ui_right")
+		var direction := Input.get_axis("left", "right")
 		if direction:
 			if was_wall_jumping:
 				velocity.x = direction * SPEED * 1.3
 			else:
 				if cur_dir == direction or velocity.y != 0:
-					if velocity.y == 0:
+					if velocity.y == 0 and not attacking:
 						sprite.play("run")
 					velocity.x = direction * SPEED
 				else:
@@ -92,7 +104,7 @@ func _physics_process(delta: float) -> void:
 						cur_dir = direction
 						velocity.x = direction * SPEED
 					else:
-						if sprite.animation != "turn":
+						if sprite.animation != "turn" and not attacking:
 							sprite.play("turn")
 						velocity.x = -direction * SPEED / 2
 		else:
@@ -119,7 +131,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		sliding = false
 		slide_timeout = false
-	if last_on_wall < 0.1 and Input.is_action_just_pressed("ui_accept") and can_wall_jump:
+	if last_on_wall < 0.1 and Input.is_action_just_pressed("jump") and can_wall_jump:
 		wall_jump_timer.start()
 		can_wall_jump = false
 		wall_jumping = true
@@ -141,13 +153,26 @@ func _physics_process(delta: float) -> void:
 	# Coyote Time
 	var was_on_floor := is_on_floor()
 	
-	if velocity == Vector2(0,0):
-		sprite.play("idle")
-	
 	if velocity.x == 0:
+		if not attacking:
+			sprite.play("idle")
 		was_running -= delta
 	else:
 		was_running = 0.1
+	
+	if Input.is_action_just_pressed("attack") and is_on_floor():
+		attack_polygon.scale.x = -1 if sprite.flip_h else 1
+		sprite.play("attack_1")
+		attacking = true
+		damaged = []
+	
+	if attacking:
+		for attacked_body in attack_area.get_overlapping_bodies():
+			if not attacked_body in damaged and not "Player" in str(attacked_body):
+				print(attacked_body)
+				damaged.append(attacked_body)
+				attacked_body.hit(self)
+	
 	# Move character
 	move_and_slide()
 	
@@ -169,7 +194,10 @@ func _on_wall_jump_timer_timeout() -> void:
 	can_wall_jump = true
 
 func _on_sprite_2d_animation_finished() -> void:
-	if sprite.animation == "turn":
-		sprite.play("run")
-		cur_dir = -cur_dir
-		sprite.flip_h = true if cur_dir == -1 else false
+	match sprite.animation:
+		"turn":
+			sprite.play("run")
+			cur_dir = -cur_dir
+			sprite.flip_h = true if cur_dir == -1 else false
+		"attack_1":
+			attacking = false
