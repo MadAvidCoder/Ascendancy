@@ -14,10 +14,12 @@ var wall_jumping = false
 var can_wall_jump = true
 var last_on_wall = INF
 var was_wall_jumping = false
-var cur_dir = 1
+var cur_dir = -1
 var was_running = 0
 var attacking = false
 var damaged = []
+var is_hit = false
+var hit_by
 
 @onready var coyote_timer = $CoyoteTimer
 @onready var jump_buffer = $JumpBuffer
@@ -95,7 +97,7 @@ func _physics_process(delta: float) -> void:
 				velocity.x = direction * SPEED * 1.3
 			else:
 				if cur_dir == direction or velocity.y != 0:
-					if velocity.y == 0 and not attacking:
+					if velocity.y == 0 and not is_hit and not attacking:
 						sprite.play("run")
 					velocity.x = direction * SPEED
 				else:
@@ -154,7 +156,7 @@ func _physics_process(delta: float) -> void:
 	var was_on_floor := is_on_floor()
 	
 	if velocity.x == 0:
-		if not attacking:
+		if not attacking and not is_hit:
 			sprite.play("idle")
 		was_running -= delta
 	else:
@@ -168,10 +170,12 @@ func _physics_process(delta: float) -> void:
 	
 	if attacking:
 		for attacked_body in attack_area.get_overlapping_bodies():
-			if not attacked_body in damaged and not "Player" in str(attacked_body):
-				print(attacked_body)
+			if not attacked_body in damaged:
 				damaged.append(attacked_body)
 				attacked_body.hit(self)
+	
+	if is_hit:
+		velocity.x = position.direction_to(hit_by.position).x * -600
 	
 	# Move character
 	move_and_slide()
@@ -199,5 +203,11 @@ func _on_sprite_2d_animation_finished() -> void:
 			sprite.play("run")
 			cur_dir = -cur_dir
 			sprite.flip_h = true if cur_dir == -1 else false
-		"attack_1":
-			attacking = false
+		"attack_1": attacking = false
+		"hit": is_hit = false
+
+func hit(attacker):
+	is_hit = true
+	sprite.play("hit")
+	print(attacker.name + " hit you!")
+	hit_by = attacker

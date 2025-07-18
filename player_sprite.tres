@@ -318,9 +318,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_rnkwl")
 }],
-"loop": true,
+"loop": false,
 "name": &"hit",
-"speed": 5.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,

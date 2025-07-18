@@ -9,15 +9,23 @@ var chasing = false
 
 var knockback = 100
 var direction = -1
+var damaged = false
 
 enum {
 	IDLE,
 	WALKING,
 	ATTACKING,
 	HIT,
-	DEAD
+	DEAD,
+	CHASING
 }
 
+@onready var player_area = $PlayerSenseArea
+@onready var cooldown_timer = $AttackCooldown
+@onready var attack_area = $AttackArea
+@onready var attack_polygon = $AttackArea/CollisionPolygon2D
+@onready var attack_sense_area = $AttackSenseArea
+@onready var attack_sense_polygon = $AttackSenseArea/CollisionPolygon2D
 @onready var sprite = $AnimatedSprite2D
 @onready var dir_timer = $DirectionTimer
 @onready var death_timer = $DeathTimer
@@ -45,7 +53,7 @@ func animation():
 		HIT:
 			sprite.animation = "hit"
 			sprite.position = Vector2(-7,0)
-		WALKING:
+		WALKING, CHASING:
 			sprite.animation = "walk"
 			sprite.position = Vector2(-3,0)
 		DEAD:
@@ -54,9 +62,20 @@ func animation():
 		ATTACKING:
 			sprite.animation = "attack"
 			sprite.position = Vector2(15,-6)
+	if not sprite.is_playing() and state != DEAD:
+		sprite.play()
 	if sprite.flip_h:
 		sprite.position.x = -sprite.position.x
 		sprite.position.x -= 19
+		attack_polygon.scale.x = -1
+		attack_polygon.position.x = -19
+		attack_sense_polygon.scale.x = -1
+		attack_polygon.position.x = -19
+	else:
+		attack_polygon.scale.x = 1
+		attack_polygon.position.x = 0
+		attack_sense_polygon.scale.x = 1
+		attack_polygon.position.x = 0
 
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
@@ -76,7 +95,33 @@ func _physics_process(delta: float) -> void:
 				velocity.x = 0
 		velocity.x = direction * SPEED
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED/3)
+		if state != DEAD:
+			velocity.x = move_toward(velocity.x, 0, SPEED/3)
+	
+	if state != DEAD and state != HIT:
+		for body in attack_sense_area.get_overlapping_bodies():
+			if body.name == "Player" and cooldown_timer.is_stopped():
+				damaged = false
+				state = ATTACKING
+				sprite.play("attack")
+				cooldown_timer.start()
+	
+	if sprite.animation == "attack" and 7 <= sprite.frame and sprite.frame <= 12:
+		for body in attack_area.get_overlapping_bodies():
+			if body.name == "Player" and not damaged:
+				damaged = true
+				body.hit(self)
+	
+	for body in player_area.get_overlapping_bodies():
+		if body.name == "Player":
+			if state != HIT and state != DEAD:
+				if state != ATTACKING:
+					state = CHASING
+				velocity.x = SPEED * position.direction_to(body.position).x
+				direction = 1 if velocity.x > 0 else -1
+	
+	if state == DEAD:
+		velocity.x = 0
 	
 	animation()
 	
@@ -109,7 +154,11 @@ func _on_death_timer_timeout() -> void:
 	self.queue_free()
 
 func _on_animation_finished() -> void:
-	if sprite.animation == 'hit':
-		sprite.play("idle")
-		state = IDLE
-		dir_timer.start(0.1)
+	match sprite.animation:
+		'hit':
+			sprite.play("idle")
+			state = IDLE
+			dir_timer.start(0.1)
+		'attack':
+			state = IDLE
+			dir_timer.start(0.2)
