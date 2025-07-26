@@ -1,0 +1,100 @@
+[gd_scene load_steps=5 format=3 uid="uid://cjp8o7baix3w5"]
+
+[ext_resource type="Script" uid="uid://cjh7o1g8daseu" path="res://skeleton.gd" id="1_plk42"]
+[ext_resource type="SpriteFrames" uid="uid://oytn5vcb7b20" path="res://skeleton_sprite.tres" id="2_r6xse"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lquwl"]
+size = Vector2(37, 56)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7mycd"]
+size = Vector2(779, 74)
+
+[node name="Skeleton" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("1_plk42")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-34, -6)
+scale = Vector2(2.3, 2.3)
+sprite_frames = ExtResource("2_r6xse")
+animation = &"attack"
+autoplay = "idle"
+frame = 7
+flip_h = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-9.5, 9)
+shape = SubResource("RectangleShape2D_lquwl")
+
+[node name="Raycasters" type="Node2D" parent="."]
+
+[node name="DownLeft" type="RayCast2D" parent="Raycasters"]
+position = Vector2(-52, 35)
+target_position = Vector2(0, 22)
+collision_mask = 4
+
+[node name="LeftTop" type="RayCast2D" parent="Raycasters"]
+position = Vector2(-42, -30)
+target_position = Vector2(-25, 0)
+collision_mask = 4
+
+[node name="LeftBottom" type="RayCast2D" parent="Raycasters"]
+position = Vector2(-44, 32)
+target_position = Vector2(-25, 0)
+collision_mask = 4
+
+[node name="DownRight" type="RayCast2D" parent="Raycasters"]
+position = Vector2(31, 35)
+target_position = Vector2(0, 22)
+collision_mask = 4
+
+[node name="RightTop" type="RayCast2D" parent="Raycasters"]
+position = Vector2(23, -32)
+target_position = Vector2(25, 0)
+collision_mask = 4
+
+[node name="RightBottom" type="RayCast2D" parent="Raycasters"]
+position = Vector2(23, 32)
+target_position = Vector2(25, 0)
+collision_mask = 4
+
+[node name="DirectionTimer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+autostart = true
+
+[node name="DeathTimer" type="Timer" parent="."]
+wait_time = 7.5
+one_shot = true
+
+[node name="AttackCooldown" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="AttackArea" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="AttackArea"]
+position = Vector2(-19, 0)
+scale = Vector2(-1, 1)
+polygon = PackedVector2Array(37, 36, 40, 25, 40, 11, 37, -1, 32, -12, 16, -23, 38, -37, 52, -24, 59, -7, 63, 3, 64, 35, 64, 37, 37, 37)
+
+[node name="AttackSenseArea" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="AttackSenseArea"]
+position = Vector2(-19, 0)
+scale = Vector2(-1, 1)
+polygon = PackedVector2Array(15, -12, 11, -27, 39, -42, 61, -23, 69, 33, 22, 27)
+
+[node name="PlayerSenseArea" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerSenseArea"]
+position = Vector2(-0.5, 0)
+shape = SubResource("RectangleShape2D_7mycd")
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animation_finished"]
+[connection signal="timeout" from="DirectionTimer" to="." method="_on_direction_timer_timeout"]
+[connection signal="timeout" from="DeathTimer" to="." method="_on_death_timer_timeout"]
