@@ -112,13 +112,20 @@ func _physics_process(delta: float) -> void:
 				damaged = true
 				body.hit(self)
 	
+	var player_found = false 
+	
 	for body in player_area.get_overlapping_bodies():
 		if body.name == "Player":
+			player_found = true
 			if state != HIT and state != DEAD:
 				if state != ATTACKING:
 					state = CHASING
-				velocity.x = SPEED * position.direction_to(body.position).x
-				direction = 1 if velocity.x > 0 else -1
+					velocity.x = SPEED * position.direction_to(body.position).x
+					direction = 1 if velocity.x > 0 else -1
+	
+	if not player_found and state == CHASING:
+		dir_timer.start(choose([1.5, 2, 2.5]))
+		state = IDLE
 	
 	if state == DEAD:
 		velocity.x = 0
