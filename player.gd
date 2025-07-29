@@ -158,7 +158,7 @@ func _physics_process(delta: float) -> void:
 	var was_on_floor := is_on_floor()
 	
 	if velocity.x == 0:
-		if not attacking and not is_hit:
+		if not attacking and not is_hit and not was_wall_jumping and not wall_jumping:
 			sprite.play("idle")
 		was_running -= delta
 	else:
