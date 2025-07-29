@@ -53,13 +53,14 @@ animations = [{
 "speed": 7.0
 }]
 
-[node name="Fire" type="CharacterBody2D"]
+[node name="Fire" type="Area2D"]
+collision_layer = 0
+script = ExtResource("1_5ltu8")
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(-30, 0)
 sprite_frames = SubResource("SpriteFrames_ycdy4")
 frame_progress = 0.62149
-script = ExtResource("1_5ltu8")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 position = Vector2(-536, 384)
