@@ -292,7 +292,7 @@ tile_set = SubResource("TileSet_h2yge")
 position = Vector2(1153, -457)
 
 [node name="Player" type="CharacterBody2D" parent="."]
-position = Vector2(319, 468)
+position = Vector2(367, 444)
 collision_mask = 4
 safe_margin = 0.14
 script = ExtResource("1_ig7tw")
@@ -300,9 +300,8 @@ script = ExtResource("1_ig7tw")
 [node name="Sprite2D" type="AnimatedSprite2D" parent="Player"]
 scale = Vector2(2, 2)
 sprite_frames = ExtResource("2_lquwl")
-animation = &"hit"
+animation = &"idle"
 autoplay = "idle"
-frame_progress = 1.0
 flip_h = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
@@ -344,7 +343,12 @@ collision_mask = 4
 target_position = Vector2(-50, 0)
 collision_mask = 4
 
+[node name="BottomRaycast" type="RayCast2D" parent="Player/Raycasters"]
+target_position = Vector2(0, 25)
+collision_mask = 4
+
 [node name="AttackArea" type="Area2D" parent="Player"]
+visible = false
 collision_layer = 0
 collision_mask = 2
 monitorable = false

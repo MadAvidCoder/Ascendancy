@@ -31,7 +31,7 @@ shape = SubResource("RectangleShape2D_lquwl")
 
 [node name="DownLeft" type="RayCast2D" parent="Raycasters"]
 position = Vector2(-52, 35)
-target_position = Vector2(0, 22)
+target_position = Vector2(0, 5)
 collision_mask = 4
 
 [node name="LeftTop" type="RayCast2D" parent="Raycasters"]
@@ -46,7 +46,7 @@ collision_mask = 4
 
 [node name="DownRight" type="RayCast2D" parent="Raycasters"]
 position = Vector2(31, 35)
-target_position = Vector2(0, 22)
+target_position = Vector2(0, 5)
 collision_mask = 4
 
 [node name="RightTop" type="RayCast2D" parent="Raycasters"]

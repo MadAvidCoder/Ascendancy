@@ -32,6 +32,7 @@ var hit_by
 @onready var collision_rect = load("res://player_collision_rectangle.tres")
 @onready var attack_area = $AttackArea
 @onready var attack_polygon = $AttackArea/CollisionPolygon2D
+@onready var bottom_raycast = $Raycasters/BottomRaycast
 
 func _process(delta: float) -> void:
 	if sprite.flip_h:
@@ -118,7 +119,7 @@ func _physics_process(delta: float) -> void:
 			was_wall_jumping = true
 	
 	last_on_wall += delta
-	if is_on_wall_only():
+	if is_on_wall_only() and not bottom_raycast.is_colliding():
 		sprite.play("wall_slide")
 		if left_raycast.is_colliding():
 			sprite.flip_h = false
@@ -133,6 +134,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		sliding = false
 		slide_timeout = false
+	
 	if last_on_wall < 0.1 and Input.is_action_just_pressed("jump") and can_wall_jump:
 		wall_jump_timer.start()
 		can_wall_jump = false
