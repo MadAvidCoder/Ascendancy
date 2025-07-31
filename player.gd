@@ -136,7 +136,7 @@ func _physics_process(delta: float) -> void:
 			sliding = false
 			slide_timeout = false
 		
-		if last_on_wall < 0.1 and Input.is_action_just_pressed("jump") and can_wall_jump:
+		if last_on_wall < 0.2 and Input.is_action_just_pressed("jump") and can_wall_jump:
 			wall_jump_timer.start()
 			can_wall_jump = false
 			wall_jumping = true
