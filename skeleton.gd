@@ -82,22 +82,6 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 		velocity.x = 0
 	
-	if state == WALKING:
-		if direction == -1:
-			if not raycasts["left"]["down"].is_colliding() or raycasts["left"]["top"].is_colliding() or raycasts["left"]["bottom"].is_colliding():
-				dir_timer.start(choose([2, 2.5, 3]))
-				state = IDLE
-				velocity.x = 0
-		elif direction == 1:
-			if not raycasts["right"]["down"].is_colliding() or raycasts["right"]["top"].is_colliding() or raycasts["right"]["bottom"].is_colliding():
-				dir_timer.start(choose([2, 2.5, 3]))
-				state = IDLE
-				velocity.x = 0
-		velocity.x = direction * SPEED
-	else:
-		if state != DEAD:
-			velocity.x = move_toward(velocity.x, 0, SPEED/3)
-	
 	if state != DEAD and state != HIT:
 		for body in attack_sense_area.get_overlapping_bodies():
 			if body.name == "Player" and cooldown_timer.is_stopped():
@@ -127,8 +111,24 @@ func _physics_process(delta: float) -> void:
 		dir_timer.start(choose([1.5, 2, 2.5]))
 		state = IDLE
 	
-	if state == DEAD:
+	if state == WALKING or state == CHASING:
+		if direction == -1:
+			if not raycasts["left"]["down"].is_colliding() or raycasts["left"]["top"].is_colliding() or raycasts["left"]["bottom"].is_colliding():
+				dir_timer.start(choose([2, 2.5, 3]))
+				state = IDLE
+				velocity.x = 0
+			elif state == WALKING:
+				velocity.x = direction * SPEED
+		elif direction == 1:
+			if not raycasts["right"]["down"].is_colliding() or raycasts["right"]["top"].is_colliding() or raycasts["right"]["bottom"].is_colliding():
+				dir_timer.start(choose([2, 2.5, 3]))
+				state = IDLE
+				velocity.x = 0
+			elif state == WALKING:
+				velocity.x = direction * SPEED
+	elif state == DEAD or state == IDLE or state == ATTACKING:
 		velocity.x = 0
+	
 	
 	animation()
 	
