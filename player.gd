@@ -180,6 +180,12 @@ func _physics_process(delta: float) -> void:
 		if is_hit:
 			velocity.x = position.direction_to(hit_by.position).x * -600
 		
+		if not sprite.animation == "turn" and not sprite.animation == "wall_slide":
+			if velocity.x < 0:
+				sprite.flip_h = true
+			elif velocity.x > 0:
+				sprite.flip_h = false
+		
 		# Move character
 		move_and_slide()
 		
