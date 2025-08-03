@@ -91,7 +91,7 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_released("jump") and velocity.y <= 0 and not wall_jumping:
 			velocity.y *= 0.5
 
-		if not wall_jumping:
+		if not wall_jumping and not attacking:
 			# Movement
 			var direction := Input.get_axis("left", "right")
 			if direction:
