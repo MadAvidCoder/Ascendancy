@@ -20,6 +20,9 @@ enum {
 	CHASING
 }
 
+## Sets whether the skeleton is hostile to the player, and will follow/attack them.
+@export var hostile: bool = true
+
 @onready var player_area = $PlayerSenseArea
 @onready var cooldown_timer = $AttackCooldown
 @onready var attack_area = $AttackArea
@@ -82,30 +85,31 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 		velocity.x = 0
 	
-	if state != DEAD and state != HIT:
-		for body in attack_sense_area.get_overlapping_bodies():
-			if body.name == "Player" and cooldown_timer.is_stopped():
-				damaged = false
-				state = ATTACKING
-				sprite.play("attack")
-				cooldown_timer.start()
-	
-	if sprite.animation == "attack" and 7 <= sprite.frame and sprite.frame <= 12:
-		for body in attack_area.get_overlapping_bodies():
-			if body.name == "Player" and not damaged:
-				damaged = true
-				body.hit(self)
-	
 	var player_found = false 
 	
-	for body in player_area.get_overlapping_bodies():
-		if body.name == "Player":
-			player_found = true
-			if state != HIT and state != DEAD:
-				if state != ATTACKING:
-					state = CHASING
-					velocity.x = SPEED * position.direction_to(body.position).x
-					direction = 1 if velocity.x > 0 else -1
+	if hostile:
+		if state != DEAD and state != HIT:
+			for body in attack_sense_area.get_overlapping_bodies():
+				if body.name == "Player" and cooldown_timer.is_stopped():
+					damaged = false
+					state = ATTACKING
+					sprite.play("attack")
+					cooldown_timer.start()
+		
+		if sprite.animation == "attack" and 7 <= sprite.frame and sprite.frame <= 12:
+			for body in attack_area.get_overlapping_bodies():
+				if body.name == "Player" and not damaged:
+					damaged = true
+					body.hit(self)
+	
+		for body in player_area.get_overlapping_bodies():
+			if body.name == "Player":
+				player_found = true
+				if state != HIT and state != DEAD:
+					if state != ATTACKING:
+						state = CHASING
+						velocity.x = SPEED * position.direction_to(body.position).x
+						direction = 1 if velocity.x > 0 else -1
 	
 	if not player_found and state == CHASING:
 		dir_timer.start(choose([1.5, 2, 2.5]))
@@ -128,7 +132,6 @@ func _physics_process(delta: float) -> void:
 				velocity.x = direction * SPEED
 	elif state == DEAD or state == IDLE or state == ATTACKING:
 		velocity.x = 0
-	
 	
 	animation()
 	
