@@ -61,13 +61,14 @@ func _process(delta: float) -> void:
 			
 
 func _physics_process(delta: float) -> void:
-	# Gravity
-	if not is_on_floor():
-		if velocity.y >= 0:
-			velocity += get_gravity() * delta * 1.8
-		else:
-			velocity += get_gravity() * delta * 1.2
 	if not dead:
+		# Gravity
+		if not is_on_floor():
+			if velocity.y >= 0:
+				velocity += get_gravity() * delta * 1.8
+			else:
+				velocity += get_gravity() * delta * 1.2
+		
 		# Jump
 		if Input.is_action_just_pressed("jump") or jump_buffered:
 			if sprite.animation == "turn":
@@ -193,6 +194,14 @@ func _physics_process(delta: float) -> void:
 		if was_on_floor and not is_on_floor() and velocity.y >= 0:
 			can_coyote = true
 			coyote_timer.start()
+	else:
+		if not is_on_floor():
+			velocity = Vector2(0,0)
+			if velocity.y >= 0:
+				velocity += get_gravity() * delta * 1.8
+			else:
+				velocity += get_gravity() * delta * 1.2
+			move_and_slide()
 
 func _on_coyote_timeout() -> void:
 	can_coyote = false
