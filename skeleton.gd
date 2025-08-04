@@ -8,7 +8,6 @@ var state = IDLE
 var chasing = false
 
 var knockback = 100
-var direction = -1
 var damaged = false
 
 enum {
@@ -17,8 +16,18 @@ enum {
 	ATTACKING,
 	HIT,
 	DEAD,
-	CHASING
+	CHASING,
 }
+
+enum directions {
+	## Skeleton starts facing left
+	left,
+	## Skeleton starts facing right
+	right,
+}
+
+## Sets the starting direction for the skeleton. Can be used to prevent multiple skeletons from always movign the same direction.
+@export var direction: directions = directions.left
 
 ## Sets whether the skeleton is hostile to the player, and will follow/attack them.
 @export var hostile: bool = true
@@ -46,7 +55,7 @@ enum {
 }
 
 func animation():
-	sprite.flip_h = true if direction == -1 else false
+	sprite.flip_h = true if direction == directions.left else false
 	match state:
 		IDLE:
 			sprite.animation = "idle"
@@ -109,27 +118,27 @@ func _physics_process(delta: float) -> void:
 					if state != ATTACKING:
 						state = CHASING
 						velocity.x = SPEED * position.direction_to(body.position).x
-						direction = 1 if velocity.x > 0 else -1
+						direction = directions.right if velocity.x > 0 else directions.left
 	
 	if not player_found and state == CHASING:
 		dir_timer.start(choose([1.5, 2, 2.5]))
 		state = IDLE
 	
 	if state == WALKING or state == CHASING:
-		if direction == -1:
+		if direction == directions.left:
 			if not raycasts["left"]["down"].is_colliding() or raycasts["left"]["top"].is_colliding() or raycasts["left"]["bottom"].is_colliding():
 				dir_timer.start(choose([2, 2.5, 3]))
 				state = IDLE
 				velocity.x = 0
 			elif state == WALKING:
-				velocity.x = direction * SPEED
-		elif direction == 1:
+				velocity.x = -SPEED
+		elif direction == directions.right:
 			if not raycasts["right"]["down"].is_colliding() or raycasts["right"]["top"].is_colliding() or raycasts["right"]["bottom"].is_colliding():
 				dir_timer.start(choose([2, 2.5, 3]))
 				state = IDLE
 				velocity.x = 0
 			elif state == WALKING:
-				velocity.x = direction * SPEED
+				velocity.x = SPEED
 	elif state == DEAD or state == IDLE or state == ATTACKING:
 		velocity.x = 0
 	
@@ -142,7 +151,7 @@ func _on_direction_timer_timeout() -> void:
 		state = WALKING
 		dir_timer.start(choose([3.5, 4, 4.5, 5]))
 		if not chasing:
-			direction = -direction
+			direction = directions.left if direction == directions.right else directions.right
 	elif state == WALKING:
 		dir_timer.start(choose([2, 2.5, 3]))
 		state = IDLE
