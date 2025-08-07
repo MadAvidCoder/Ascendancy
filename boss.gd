@@ -27,6 +27,7 @@ var player_direction: Vector2
 @onready var collision = $CollisionPolygon2D
 @onready var attack_sense = $AttackPlayerArea
 @onready var cooldown = $AttackCooldown
+@onready var healthbar = $ProgressBar
 
 func animation() -> void:
 	sprite.flip_h =  true if direction == directions.left else false
@@ -80,3 +81,4 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 func hit(attacker: CharacterBody2D) -> void:
 	if attacker.name == "Player":
 		health -= 10
+		healthbar.value = health

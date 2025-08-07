@@ -1583,7 +1583,7 @@ offset_bottom = -21.0
 theme = SubResource("Theme_dg77c")
 max_value = 150.0
 step = 1.0
-value = 100.0
+value = 150.0
 show_percentage = false
 
 [node name="Skeleton" parent="." instance=ExtResource("2_7mycd")]
