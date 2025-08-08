@@ -34,6 +34,7 @@ var dead = false
 @onready var attack_area = $AttackArea
 @onready var attack_polygon = $AttackArea/CollisionPolygon2D
 @onready var bottom_raycast = $Raycasters/BottomRaycast
+@onready var knockback =  $KnockbackTimer
 
 func _process(delta: float) -> void:
 	if sprite.flip_h:
@@ -222,7 +223,6 @@ func _on_sprite_2d_animation_finished() -> void:
 			cur_dir = -cur_dir
 			sprite.flip_h = true if cur_dir == -1 else false
 		"attack_1": attacking = false
-		"hit": is_hit = false
 
 func hit(attacker):
 	if not dead:
@@ -233,9 +233,14 @@ func hit(attacker):
 			is_hit = true
 			sprite.play("hit")
 			print(attacker.name + " hit you!")
+			knockback.start()
 			hit_by = attacker
 		elif "Boss" in attacker.name:
 			is_hit = true
 			sprite.play("hit")
 			print(attacker.name + " hit you!")
+			knockback.start()
 			hit_by = attacker
+
+func _on_knockback_timer_timeout() -> void:
+	is_hit = false

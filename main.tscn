@@ -1636,6 +1636,9 @@ one_shot = true
 wait_time = 0.35
 one_shot = true
 
+[node name="KnockbackTimer" type="Timer" parent="Player"]
+wait_time = 0.12
+
 [node name="Raycasters" type="Node2D" parent="Player"]
 position = Vector2(0, 74)
 
@@ -1851,3 +1854,4 @@ position = Vector2(1839, 400)
 [connection signal="timeout" from="Player/JumpBuffer" to="Player" method="_on_jump_buffer_timeout"]
 [connection signal="timeout" from="Player/WallSlideTimer" to="Player" method="_on_wall_slide_timer_timeout"]
 [connection signal="timeout" from="Player/WallJumpTimer" to="Player" method="_on_wall_jump_timer_timeout"]
+[connection signal="timeout" from="Player/KnockbackTimer" to="Player" method="_on_knockback_timer_timeout"]
