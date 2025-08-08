@@ -20,6 +20,7 @@ var health: int = 150
 var state: int = RUN
 var direction: directions = directions.right
 var player_direction: Vector2
+var has_damaged = false
 
 @onready var player = $"../Player"
 @onready var sprite = $AnimatedSprite2D
@@ -28,10 +29,12 @@ var player_direction: Vector2
 @onready var attack_sense = $AttackPlayerArea
 @onready var cooldown = $AttackCooldown
 @onready var healthbar = $ProgressBar
+@onready var attack_area = $AttackArea
 
 func animation() -> void:
 	sprite.flip_h =  true if direction == directions.left else false
 	collision.scale.x = -1 if direction == directions.left else 1
+	attack_area.scale.x = -1 if direction == directions.left else 1
 	match state:
 		IDLE: sprite.animation = "idle"
 		HIT: sprite.animation = "hit"
@@ -48,6 +51,12 @@ func _physics_process(delta: float) -> void:
 		
 		if state == ATTACK:
 			velocity.x = 0
+			if sprite.frame == 9 or sprite.frame == 10:
+				for body in attack_area.get_overlapping_bodies():
+					if body.name == "Player":
+						if not has_damaged:
+							has_damaged = true
+							body.hit(self)
 		else:
 			if position.y > player.position.y + 80 and is_on_floor() and jump_timer.is_stopped():
 				velocity.y = -500
@@ -62,7 +71,8 @@ func _physics_process(delta: float) -> void:
 				state = RUN
 			
 			for body in attack_sense.get_overlapping_bodies():
-				if body.name == "Player" and cooldown.is_stopped():
+				if body.name == "Player" and cooldown.is_stopped() and state != ATTACK:
+					has_damaged = false
 					cooldown.start()
 					state = ATTACK
 		

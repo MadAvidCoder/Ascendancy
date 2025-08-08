@@ -234,3 +234,8 @@ func hit(attacker):
 			sprite.play("hit")
 			print(attacker.name + " hit you!")
 			hit_by = attacker
+		elif "Boss" in attacker.name:
+			is_hit = true
+			sprite.play("hit")
+			print(attacker.name + " hit you!")
+			hit_by = attacker
