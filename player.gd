@@ -21,6 +21,7 @@ var damaged = []
 var is_hit = false
 var hit_by
 var dead = false
+var health = 100
 
 @onready var coyote_timer = $CoyoteTimer
 @onready var jump_buffer = $JumpBuffer
@@ -35,9 +36,12 @@ var dead = false
 @onready var attack_polygon = $AttackArea/CollisionPolygon2D
 @onready var bottom_raycast = $Raycasters/BottomRaycast
 @onready var knockback =  $KnockbackTimer
+@onready var healthbar = $ProgressBar
 
 func _process(delta: float) -> void:
+	healthbar.value = health
 	if sprite.flip_h:
+		healthbar.position = Vector2(-26,-10)
 		match sprite.animation:
 			"idle", "run", "jump": 
 				collision_rect.size = Vector2(20.75, 38.0)
@@ -49,6 +53,7 @@ func _process(delta: float) -> void:
 				collision_rect.size = Vector2(23.25, 38.0)
 				collision.position = Vector2(8.75, 42.0)
 	else:
+		healthbar.position = Vector2(-45,-10)
 		match sprite.animation:
 			"idle", "run", "jump": 
 				collision_rect.size = Vector2(20.75, 38.0)
@@ -59,7 +64,6 @@ func _process(delta: float) -> void:
 			"attack_1":
 				collision_rect.size = Vector2(23.25, 38.0)
 				collision.position = Vector2(-8.25, 42.0)
-			
 
 func _physics_process(delta: float) -> void:
 	if not dead:
@@ -96,7 +100,7 @@ func _physics_process(delta: float) -> void:
 		if not wall_jumping and not attacking:
 			# Movement
 			var direction := Input.get_axis("left", "right")
-			if direction:
+			if direction and not is_hit:
 				if was_wall_jumping:
 					velocity.x = direction * SPEED * 1.3
 				else:
@@ -227,14 +231,21 @@ func _on_sprite_2d_animation_finished() -> void:
 func hit(attacker):
 	if not dead:
 		if "Fire" in attacker.name:
+			health = 0
 			sprite.play("death")
 			dead = true
+			healthbar.hide()
 		elif "Skeleton" in attacker.name:
-			is_hit = true
-			sprite.play("hit")
-			print(attacker.name + " hit you!")
-			knockback.start()
-			hit_by = attacker
+			health -= 33.34
+			if health <= 0:
+				healthbar.hide()
+				sprite.play("death")
+				dead = true
+			else:
+				sprite.play("hit")
+				is_hit = true
+				knockback.start()
+				hit_by = attacker
 		elif "Boss" in attacker.name:
 			is_hit = true
 			sprite.play("hit")
@@ -244,3 +255,5 @@ func hit(attacker):
 
 func _on_knockback_timer_timeout() -> void:
 	is_hit = false
+	if not attacking and not is_hit and not was_wall_jumping and not wall_jumping:
+		sprite.play("idle")

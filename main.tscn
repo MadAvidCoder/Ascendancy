@@ -1,4 +1,4 @@
-[gd_scene load_steps=73 format=4 uid="uid://d031rdvr6cmkj"]
+[gd_scene load_steps=76 format=4 uid="uid://d031rdvr6cmkj"]
 
 [ext_resource type="Script" uid="uid://dttang3oeib2w" path="res://boss.gd" id="1_5vw27"]
 [ext_resource type="Script" uid="uid://dqam8peco7o7c" path="res://player.gd" id="1_ig7tw"]
@@ -1537,6 +1537,37 @@ ProgressBar/fonts/font = SubResource("FontFile_kek77")
 ProgressBar/styles/background = SubResource("StyleBoxFlat_4c57u")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_efxa6")
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5vw27"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.0862745, 0.0862745, 0.0705882, 0.501961)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kek77"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.254902, 0.737255, 0.0862745, 0.529412)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 6
+
+[sub_resource type="Theme" id="Theme_4c57u"]
+ProgressBar/constants/outline_size = 0
+ProgressBar/font_sizes/font_size = 16
+ProgressBar/fonts/font = SubResource("FontFile_kek77")
+ProgressBar/styles/background = SubResource("StyleBoxFlat_5vw27")
+ProgressBar/styles/fill = SubResource("StyleBoxFlat_kek77")
+
 [node name="Node2D" type="Node2D"]
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
@@ -1638,6 +1669,7 @@ one_shot = true
 
 [node name="KnockbackTimer" type="Timer" parent="Player"]
 wait_time = 0.12
+one_shot = true
 
 [node name="Raycasters" type="Node2D" parent="Player"]
 position = Vector2(0, 74)
@@ -1663,6 +1695,16 @@ monitorable = false
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Player/AttackArea"]
 scale = Vector2(-1, 1)
 polygon = PackedVector2Array(90, 32, 90, 66, 80, 80, 57, 80, 21, 64, 25, 54, 35, 45, 28, 28, 23, 21, 68, 3)
+
+[node name="ProgressBar" type="ProgressBar" parent="Player"]
+offset_left = -45.0
+offset_top = -10.0
+offset_right = 27.0
+offset_bottom = -5.0
+theme = SubResource("Theme_4c57u")
+step = 1.0
+value = 100.0
+show_percentage = false
 
 [node name="Skeleton2" parent="." instance=ExtResource("2_7mycd")]
 position = Vector2(1814, -464)
