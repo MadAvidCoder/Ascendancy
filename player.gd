@@ -109,8 +109,10 @@ func _physics_process(delta: float) -> void:
 			if direction and not is_hit:
 				if was_wall_jumping:
 					velocity.x = direction * SPEED * 1.3
+					cur_dir = direction
 				else:
 					if cur_dir == direction or velocity.y != 0:
+						cur_dir = direction
 						if velocity.y == 0 and not is_hit and not attacking:
 							sprite.play("run")
 						velocity.x = direction * SPEED
