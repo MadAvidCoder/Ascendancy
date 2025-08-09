@@ -91,6 +91,7 @@ func _physics_process(delta: float) -> void:
 		animation()
 		
 		if health <= 0:
+			player.health = 100
 			state = DEAD
 			active = false
 			sprite.play("death")
