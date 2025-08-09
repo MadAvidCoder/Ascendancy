@@ -30,6 +30,7 @@ var has_damaged = false
 @onready var cooldown = $AttackCooldown
 @onready var healthbar = $ProgressBar
 @onready var attack_area = $AttackArea
+@onready var exit_ramp = $"../TileMapLayer/BossExit"
 
 func animation() -> void:
 	sprite.flip_h =  true if direction == directions.left else false
@@ -83,10 +84,20 @@ func _physics_process(delta: float) -> void:
 
 		move_and_slide()
 		animation()
+		
+		if health <= 0:
+			state = DEAD
+			active = false
+			sprite.play("death")
+			exit_ramp.show()
+			exit_ramp.collision_enabled = true
+			healthbar.hide()
 
 func _on_animated_sprite_2d_animation_finished() -> void:
 	if sprite.animation == "attack":
 		state = IDLE
+	elif sprite.animation == "death":
+		queue_free()
 
 func hit(attacker: CharacterBody2D) -> void:
 	if attacker.name == "Player":
