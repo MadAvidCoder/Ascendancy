@@ -189,10 +189,11 @@ func _physics_process(delta: float) -> void:
 			damaged = []
 		
 		if attacking:
-			for attacked_body in attack_area.get_overlapping_bodies():
-				if not attacked_body in damaged:
-					damaged.append(attacked_body)
-					attacked_body.hit(self)
+			if (sprite.animation == "attack_1" and sprite.frame != 0) or (sprite.animation == "attack_2" and not sprite.frame in [0,1]):
+				for attacked_body in attack_area.get_overlapping_bodies():
+					if not attacked_body in damaged:
+						damaged.append(attacked_body)
+						attacked_body.hit(self)
 		
 		if is_hit:
 			velocity.x = position.direction_to(hit_by.position).x * -600
