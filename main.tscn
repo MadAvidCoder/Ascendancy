@@ -11,8 +11,8 @@
 [ext_resource type="Texture2D" uid="uid://qin4humxoest" path="res://assets/tilemaps/Dungeon Tile Set.png" id="14_w48qg"]
 
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_5vw27"]
-a = Vector2(2166, -2329)
-b = Vector2(2166, -2607)
+a = Vector2(2166, -2339)
+b = Vector2(2166, -2757)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_vivmo"]
 texture = ExtResource("14_w48qg")
@@ -1580,7 +1580,7 @@ collision_layer = 0
 script = ExtResource("1_kek77")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BossStartZone"]
-position = Vector2(0, 4)
+position = Vector2(-101, 4)
 shape = SubResource("SegmentShape2D_5vw27")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
