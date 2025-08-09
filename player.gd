@@ -23,6 +23,8 @@ var hit_by
 var dead = false
 var health = 100
 
+signal player_died
+
 @onready var coyote_timer = $CoyoteTimer
 @onready var jump_buffer = $JumpBuffer
 @onready var wall_slide_timer = $WallSlideTimer
@@ -37,6 +39,8 @@ var health = 100
 @onready var bottom_raycast = $Raycasters/BottomRaycast
 @onready var knockback =  $KnockbackTimer
 @onready var healthbar = $ProgressBar
+@onready var respawn_timer = $RespawnTimer
+@onready var safe_timer = $SafeTimer
 
 func _process(delta: float) -> void:
 	healthbar.value = health
@@ -69,10 +73,13 @@ func _physics_process(delta: float) -> void:
 	if not dead:
 		# Gravity
 		if not is_on_floor():
-			if velocity.y >= 0:
-				velocity += get_gravity() * delta * 1.8
+			if safe_timer.is_stopped():
+				if velocity.y >= 0:
+					velocity += get_gravity() * delta * 1.8
+				else:
+					velocity += get_gravity() * delta * 1.2
 			else:
-				velocity += get_gravity() * delta * 1.2
+				velocity += get_gravity() * delta * 0.75
 		
 		# Jump
 		if Input.is_action_just_pressed("jump") or jump_buffered:
@@ -231,28 +238,41 @@ func _on_sprite_2d_animation_finished() -> void:
 func hit(attacker):
 	if not dead:
 		if "Fire" in attacker.name:
-			health = 0
-			sprite.play("death")
-			dead = true
-			healthbar.hide()
-		elif "Skeleton" in attacker.name:
-			health -= 33.34
-			if health <= 0:
-				healthbar.hide()
+			if not dead and safe_timer.is_stopped():
+				health = 0
 				sprite.play("death")
 				dead = true
-			else:
-				sprite.play("hit")
-				is_hit = true
-				knockback.start()
-				hit_by = attacker
+				healthbar.hide()
+				respawn_timer.start()
+				safe_timer.start()
+		elif "Skeleton" in attacker.name:
+			if not dead and safe_timer.is_stopped():
+				health -= 33.34
+				if health <= 0:
+					healthbar.hide()
+					sprite.play("death")
+					dead = true
+					respawn_timer.start()
+					safe_timer.start()
+				else:
+					sprite.play("hit")
+					is_hit = true
+					knockback.start()
+					hit_by = attacker
 		elif "Boss" in attacker.name:
-			health -= 12.5
-			is_hit = true
-			sprite.play("hit")
-			print(attacker.name + " hit you!")
-			knockback.start()
-			hit_by = attacker
+			if not dead:
+				health -= 12.5
+				if health <= 0:
+					healthbar.hide()
+					sprite.play("death")
+					dead = true
+					player_died.emit()
+				else:
+					is_hit = true
+					sprite.play("hit")
+					print(attacker.name + " hit you!")
+					knockback.start()
+					hit_by = attacker
 
 func _on_knockback_timer_timeout() -> void:
 	is_hit = false
@@ -261,3 +281,10 @@ func _on_knockback_timer_timeout() -> void:
 
 func _on_boss_battle_begin() -> void:
 	health = 100
+
+func _on_respawn_timer_timeout() -> void:
+	position = Vector2(137,150)
+	health = 100
+	healthbar.show()
+	sprite.play("idle")
+	dead = false
