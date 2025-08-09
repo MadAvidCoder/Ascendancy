@@ -91,18 +91,18 @@ func _physics_process(delta: float) -> void:
 		animation()
 		
 		if health <= 0:
-			player.health = 100
 			state = DEAD
 			active = false
 			sprite.play("death")
-			exit_ramp.show()
-			exit_ramp.collision_enabled = true
 			healthbar.hide()
 
 func _on_animated_sprite_2d_animation_finished() -> void:
 	if sprite.animation == "attack":
 		state = IDLE
 	elif sprite.animation == "death":
+		player.health = 100
+		exit_ramp.show()
+		exit_ramp.collision_enabled = true
 		queue_free()
 
 func hit(attacker: CharacterBody2D) -> void:
