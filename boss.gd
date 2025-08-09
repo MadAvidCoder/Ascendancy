@@ -31,6 +31,7 @@ var has_damaged = false
 @onready var healthbar = $ProgressBar
 @onready var attack_area = $AttackArea
 @onready var exit_ramp = $"../TileMapLayer/BossExit"
+@onready var boss_start_zone = $"../BossStartZone"
 
 func animation() -> void:
 	sprite.flip_h =  true if direction == directions.left else false
@@ -86,6 +87,8 @@ func _physics_process(delta: float) -> void:
 		if player.dead:
 			state = IDLE
 			velocity.x = 0
+			active = false
+			boss_start_zone.battle_started = false
 		
 		move_and_slide()
 		animation()
@@ -112,3 +115,5 @@ func hit(attacker: CharacterBody2D) -> void:
 
 func _on_boss_battle_begin() -> void:
 	active = true
+	health = 150
+	healthbar.value = health

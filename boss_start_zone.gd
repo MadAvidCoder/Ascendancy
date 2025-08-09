@@ -9,4 +9,3 @@ func _on_body_entered(body: Node2D) -> void:
 	if body.name == "Player" and not battle_started:
 		battle_started = true
 		battle_begin.emit()
-		queue_free()
