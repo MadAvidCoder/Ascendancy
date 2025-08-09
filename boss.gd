@@ -81,7 +81,12 @@ func _physics_process(delta: float) -> void:
 			direction = directions.left
 		elif velocity.x > 0:
 			direction = directions.right
-
+		
+		
+		if player.dead:
+			state = IDLE
+			velocity.x = 0
+		
 		move_and_slide()
 		animation()
 		

@@ -23,8 +23,6 @@ var hit_by
 var dead = false
 var health = 100
 
-signal player_died
-
 @onready var coyote_timer = $CoyoteTimer
 @onready var jump_buffer = $JumpBuffer
 @onready var wall_slide_timer = $WallSlideTimer
@@ -266,7 +264,8 @@ func hit(attacker):
 					healthbar.hide()
 					sprite.play("death")
 					dead = true
-					player_died.emit()
+					respawn_timer.start(3)
+					safe_timer.start(3.5)
 				else:
 					is_hit = true
 					sprite.play("hit")
