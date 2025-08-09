@@ -1379,7 +1379,7 @@ script = ExtResource("1_ig7tw")
 [node name="Sprite2D" type="AnimatedSprite2D" parent="Player"]
 scale = Vector2(2, 2)
 sprite_frames = ExtResource("2_lquwl")
-animation = &"idle"
+animation = &"death"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
@@ -1415,11 +1415,11 @@ wait_time = 0.12
 one_shot = true
 
 [node name="RespawnTimer" type="Timer" parent="Player"]
-wait_time = 3.0
+wait_time = 2.0
 one_shot = true
 
 [node name="SafeTimer" type="Timer" parent="Player"]
-wait_time = 3.5
+wait_time = 2.5
 one_shot = true
 
 [node name="Raycasters" type="Node2D" parent="Player"]
