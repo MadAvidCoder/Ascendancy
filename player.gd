@@ -247,6 +247,7 @@ func hit(attacker):
 				knockback.start()
 				hit_by = attacker
 		elif "Boss" in attacker.name:
+			health -= 12.5
 			is_hit = true
 			sprite.play("hit")
 			print(attacker.name + " hit you!")
