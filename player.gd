@@ -269,7 +269,6 @@ func hit(attacker):
 				else:
 					is_hit = true
 					sprite.play("hit")
-					print(attacker.name + " hit you!")
 					knockback.start()
 					hit_by = attacker
 
