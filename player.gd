@@ -176,7 +176,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			was_running = 0.1
 		
-		if Input.is_action_just_pressed("attack") and is_on_floor():
+		if Input.is_action_just_pressed("attack") and is_on_floor() and not attacking:
 			attack_polygon.scale.x = -1 if sprite.flip_h else 1
 			sprite.play("attack_1")
 			attacking = true
