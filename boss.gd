@@ -15,10 +15,10 @@ enum {
 
 const SPEED = 290
 
-var active: bool = true
-var health: int = 150
-var state: int = RUN
-var direction: directions = directions.right
+var active = false
+var health = 150
+var state = RUN
+var direction = directions.right
 var player_direction: Vector2
 var has_damaged = false
 
@@ -92,3 +92,6 @@ func hit(attacker: CharacterBody2D) -> void:
 	if attacker.name == "Player":
 		health -= 10
 		healthbar.value = health
+
+func _on_boss_battle_begin() -> void:
+	active = true

@@ -257,3 +257,6 @@ func _on_knockback_timer_timeout() -> void:
 	is_hit = false
 	if not attacking and not is_hit and not was_wall_jumping and not wall_jumping:
 		sprite.play("idle")
+
+func _on_boss_battle_begin() -> void:
+	health = 100
