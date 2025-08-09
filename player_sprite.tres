@@ -243,10 +243,10 @@ animations = [{
 "speed": 8.0
 }, {
 "frames": [{
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_4k2k6")
 }, {
-"duration": 1.0,
+"duration": 0.5,
 "texture": SubResource("AtlasTexture_0rl1p")
 }, {
 "duration": 1.0,
@@ -255,10 +255,10 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_facbu")
 }, {
-"duration": 1.0,
+"duration": 0.8,
 "texture": SubResource("AtlasTexture_b1qrp")
 }, {
-"duration": 1.0,
+"duration": 0.7,
 "texture": SubResource("AtlasTexture_come4")
 }],
 "loop": false,

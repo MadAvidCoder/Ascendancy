@@ -39,6 +39,7 @@ var health = 100
 @onready var healthbar = $ProgressBar
 @onready var respawn_timer = $RespawnTimer
 @onready var safe_timer = $SafeTimer
+@onready var boss = $"../Boss"
 
 func _process(delta: float) -> void:
 	healthbar.value = health
@@ -178,7 +179,10 @@ func _physics_process(delta: float) -> void:
 		
 		if Input.is_action_just_pressed("attack") and is_on_floor() and not attacking:
 			attack_polygon.scale.x = -1 if sprite.flip_h else 1
-			sprite.play("attack_1")
+			if boss.active:
+				sprite.play("attack_1")
+			else:
+				sprite.play("attack_2")
 			attacking = true
 			damaged = []
 		
@@ -231,7 +235,7 @@ func _on_sprite_2d_animation_finished() -> void:
 			sprite.play("run")
 			cur_dir = -cur_dir
 			sprite.flip_h = true if cur_dir == -1 else false
-		"attack_1": attacking = false
+		"attack_1", "attack_2": attacking = false
 
 func hit(attacker):
 	if not dead:
@@ -274,8 +278,7 @@ func hit(attacker):
 
 func _on_knockback_timer_timeout() -> void:
 	is_hit = false
-	if not attacking and not is_hit and not was_wall_jumping and not wall_jumping:
-		sprite.play("idle")
+	sprite.play("idle")
 
 func _on_boss_battle_begin() -> void:
 	health = 100
