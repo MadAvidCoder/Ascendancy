@@ -33,7 +33,7 @@ var health = 100
 @onready var collision = $CollisionShape2D
 @onready var collision_rect = load("res://player_collision_rectangle.tres")
 @onready var attack_area = $AttackArea
-@onready var attack_polygon = $AttackArea/CollisionPolygon2D
+@onready var attack_polygon_behind = $AttackArea/CollisionPolygon2D2
 @onready var bottom_raycast = $Raycasters/BottomRaycast
 @onready var knockback =  $KnockbackTimer
 @onready var healthbar = $ProgressBar
@@ -52,7 +52,7 @@ func _process(delta: float) -> void:
 			"wall_hang", "wall_slide":
 				collision_rect.size = Vector2(20.0, 38.0)
 				collision.position = Vector2(2, 42.0)
-			"attack_1":
+			"attack_1", "attack_2":
 				collision_rect.size = Vector2(23.25, 38.0)
 				collision.position = Vector2(8.75, 42.0)
 	else:
@@ -64,7 +64,7 @@ func _process(delta: float) -> void:
 			"wall_hang", "wall_slide":
 				collision_rect.size = Vector2(22.0, 34.0)
 				collision.position = Vector2(-2, 42.0)
-			"attack_1":
+			"attack_1", "attack_2":
 				collision_rect.size = Vector2(23.25, 38.0)
 				collision.position = Vector2(-8.25, 42.0)
 
@@ -180,8 +180,10 @@ func _physics_process(delta: float) -> void:
 		else:
 			was_running = 0.1
 		
+		attack_polygon_behind.disabled = true if boss.active else false
+		
 		if Input.is_action_just_pressed("attack") and not attacking:
-			attack_polygon.scale.x = -1 if sprite.flip_h else 1
+			attack_area.scale.x = -1 if sprite.flip_h else 1
 			if boss.active:
 				sprite.play("attack_1")
 			else:
