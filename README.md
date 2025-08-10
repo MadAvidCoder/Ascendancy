@@ -12,3 +12,4 @@ Platformer meets RPG, in this exciting tower-climbing game.
 - [Raven's Fantasy Icons Pack](https://clockworkraven.itch.io/raven-fantasy-icons) by [Clockwork Raven](https://clockworkraven.itch.io/) is used under [license](https://drive.google.com/drive/folders/121s8vaEk2h2Y-3cHDlfkKcwojsySYh3q).
 - [Generic Character Assest](https://brullov.itch.io/generic-char-asset) was created by [brullov](https://brullov.itch.io/generic-char-asset) and is used with permission.
 - [Fantasy Knight](https://aamatniekss.itch.io/fantasy-knight-free-pixelart-animated-character) was created by [aamatniekss](https://aamatniekss.itch.io/) and is used with permission.
+- [Sky Above](https://lostintheforest.bandcamp.com/track/sky-above) by [Lost in the Foresst](https://lostintheforest.bandcamp.com/) is licensed under [CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/).
