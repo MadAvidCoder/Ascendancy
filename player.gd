@@ -85,9 +85,10 @@ func _physics_process(delta: float) -> void:
 			if sprite.animation == "turn":
 				cur_dir = -cur_dir
 				sprite.flip_h = true if cur_dir == -1 else false
+			
 			if is_on_floor():
-				sprite.play("jump")
-				attacking = false
+				if not attacking:
+					sprite.play("jump")
 				jump_buffered = false
 				velocity.y = JUMP_VELOCITY
 			elif can_coyote:
@@ -103,7 +104,7 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_released("jump") and velocity.y <= 0 and not wall_jumping:
 			velocity.y *= 0.5
 
-		if not wall_jumping and not attacking:
+		if not wall_jumping and (not attacking or not is_on_floor()):
 			# Movement
 			var direction := Input.get_axis("left", "right")
 			if direction and not is_hit:
@@ -179,7 +180,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			was_running = 0.1
 		
-		if Input.is_action_just_pressed("attack") and is_on_floor() and not attacking:
+		if Input.is_action_just_pressed("attack") and not attacking:
 			attack_polygon.scale.x = -1 if sprite.flip_h else 1
 			if boss.active:
 				sprite.play("attack_1")
