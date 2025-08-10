@@ -1403,8 +1403,9 @@ script = ExtResource("1_ig7tw")
 [node name="Sprite2D" type="AnimatedSprite2D" parent="Player"]
 scale = Vector2(2, 2)
 sprite_frames = ExtResource("2_lquwl")
-animation = &"idle"
+animation = &"attack_2"
 autoplay = "idle"
+frame = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 position = Vector2(-8.25, 42)
