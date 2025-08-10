@@ -281,6 +281,7 @@ func hit(attacker):
 
 func _on_knockback_timer_timeout() -> void:
 	is_hit = false
+	attacking = false
 	sprite.play("idle")
 
 func _on_boss_battle_begin() -> void:
