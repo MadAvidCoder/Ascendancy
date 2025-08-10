@@ -1,5 +1,5 @@
 # Ascendancy
-Platformer meets RPG, in this exciting tower-climbing game.
+Platformer meets RPG, in this exciting tower-climbing game. Play it [here](https://madavidcoder.itch.io/ascendancy)!
 
 ## Credit
 - [Dungeon Tileset](https://incolgames.itch.io/dungeon-platformer-tile-set-pixel-art) was created by [David G](https://incolgames.itch.io/) and is used with permission.
