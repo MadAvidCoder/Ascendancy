@@ -110,7 +110,7 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 
 func hit(attacker: CharacterBody2D) -> void:
 	if attacker.name == "Player":
-		health -= 10
+		health -= 15
 		healthbar.value = health
 
 func _on_boss_battle_begin() -> void:
