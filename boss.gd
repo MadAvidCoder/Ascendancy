@@ -106,7 +106,7 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 		player.health = 100
 		exit_ramp.show()
 		exit_ramp.collision_enabled = true
-		queue_free()
+		hide()
 
 func hit(attacker: CharacterBody2D) -> void:
 	if attacker.name == "Player":
