@@ -1471,7 +1471,7 @@ polygon = PackedVector2Array(90, 32, 90, 66, 76, 79, 36, 73, 16, 74, 15, 53, 35,
 
 [node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="Player/AttackArea"]
 position = Vector2(-24, 0)
-polygon = PackedVector2Array(-11, 46, -26, 63, -28, 78, -12, 80, -3, 74, -1, 56)
+polygon = PackedVector2Array(-12, 43, -31, 58, -35, 77, -12, 80, -3, 74, -1, 56)
 
 [node name="ProgressBar" type="ProgressBar" parent="Player"]
 offset_left = -45.0
